@@ -11,7 +11,7 @@ class diceRng {
       throw new Error(`Initialization failed: ${e.message}`);
     }
 
-    // Validasi state setelah inisialisasi
+    // Validate state after initialization
     if (this.state0 === 0n && this.state1 === 0n) {
       throw new Error("Invalid state: both states are zero");
     }
@@ -19,19 +19,19 @@ class diceRng {
 
   seed(seed) {
     if (seed === undefined) {
-      // Generate kriptografis yang aman
+      // Generate cryptographically secure seed
       const buf = crypto.randomBytes(16);
       this.state0 = buf.readBigUInt64LE(0);
       this.state1 = buf.readBigUInt64LE(8);
-      // Jamin state tidak nol semua
+      // Ensure state is not all zero
       if (this.state0 === 0n && this.state1 === 0n) this.state1 = 1n;
     } else if (typeof seed === "bigint") {
-      // Seed tunggal: turunkan kedua state
+      // Single seed: derive both states
       this.state0 = seed;
       this.state1 = seed ^ 0x6a09e667f3bcc909n;
       if (this.state0 === 0n && this.state1 === 0n) this.state1 = 1n;
     } else if (Array.isArray(seed)) {
-      // State penuh
+      // Full state
       if (seed.length !== 2)
         throw new Error("Seed array must have exactly 2 elements");
       this.state0 = BigInt(seed[0]);
@@ -63,15 +63,15 @@ class diceRng {
   }
 
   nextDouble() {
-    // Metode yang lebih akurat untuk [0, 1)
+    // More accurate method for [0, 1)
     const bigIntVal = this.next();
 
-    // Ambil 53 bit acak (presisi maksimal JavaScript)
+    // Get 53 random bits (JavaScript's maximum precision)
     const highBits = Number(bigIntVal & 0x1fffffn) * 2 ** 32;
     const lowBits = Number((bigIntVal >> 32n) & 0xffffffffn);
     const full53 = highBits + lowBits;
 
-    // Normalisasi ke [0, 1)
+    // Normalize to [0, 1)
     return full53 / 9007199254740992; // 2^53
   }
 
@@ -84,7 +84,7 @@ class diceRng {
     const range = max - min + 1;
     const randVal = this.nextDouble();
 
-    // Validasi nilai acak
+    // Validate random value
     if (randVal < 0 || randVal >= 1) {
       throw new Error(`Random value out of range: ${randVal}`);
     }
@@ -92,7 +92,7 @@ class diceRng {
     return min + Math.floor(randVal * range);
   }
 
-  // Untuk debugging
+  // For debugging
   currentState() {
     return [this.state0, this.state1];
   }
