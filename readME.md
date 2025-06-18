@@ -191,13 +191,18 @@ This module throws errors in the following cases:
 
 ## 📊 Comparison with Math.random()
 
-| Feature            | Xorshift128+          | Math.random()         |
+Both `dice-rng` and `Math.random()` use the **same Xorshift128+ algorithm** under the hood (in V8 engine), but there are key differences in implementation and features:
+
+| Feature            | dice-rng              | Math.random()         |
 |--------------------|-----------------------|-----------------------|
-| Seed Control       | ✅                    | ❌                    |
-| Reproducibility    | ✅                    | ❌                    |
-| Precision          | 53-bit               | 53-bit               |
-| Period             | 2<sup>128</sup>-1    | ~2<sup>64</sup>      |
-| Speed              | Very Fast            | Fast                 |
+| **Algorithm**      | Xorshift128+          | Xorshift128+ (V8)     |
+| **Seed Control**   | ✅ Full control       | ❌ Auto-seeded        |
+| **Reproducibility**| ✅ Deterministic      | ❌ Non-deterministic  |
+| **State Access**   | ✅ Can inspect/save   | ❌ Hidden internal    |
+| **Precision**      | 53-bit                | 53-bit                |
+| **Period**         | 2<sup>128</sup>-1     | 2<sup>128</sup>-1     |
+| **Performance**    | Very Fast             | Very Fast             |
+| **Portability**    | ✅ Cross-platform     | ⚠️ Engine-dependent   |
 
 ## 🔧 package.json Configuration
 
@@ -236,6 +241,16 @@ console.log(`Generated 1M numbers in ${elapsed.toFixed(2)}ms`);
 - **Operations**: XOR, left shift, right shift
 - **Quality**: Passes most statistical tests
 - **Speed**: Excellent performance on modern CPUs
+
+### Why Use dice-rng Instead of Math.random()?
+
+Since both use the same algorithm, the main advantages of `dice-rng` are:
+
+1. **🎯 Reproducibility**: Perfect for testing, debugging, and deterministic simulations
+2. **🔧 Control**: You can save/restore generator state
+3. **🎮 Gaming**: Essential for save/load functionality in games
+4. **🧪 Scientific**: Reproducible experiments and research
+5. **🔄 Portability**: Same results across different JavaScript engines
 
 ## 📜 License
 
