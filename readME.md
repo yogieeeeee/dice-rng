@@ -3,6 +3,9 @@
 ![Node.js Version](https://img.shields.io/badge/node.js-%3E%3D%2014.0.0-brightgreen)
 ![PRNG Strength](https://img.shields.io/badge/randomness-high-yellowgreen)
 ![Period](https://img.shields.io/badge/period-2%5E128%20--%201-lightgrey)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-repo-2ea44f?style=flat&logo=github)](https://github.com/yogieeeeee/dice-rng.git)
+
 
 This module provides a fast and reliable pseudo-random number generator (PRNG) using the Xorshift128+ algorithm. Perfect for simulations, games, and applications requiring high-quality randomness without cryptographic requirements.
 
@@ -134,21 +137,38 @@ console.log('Top card:', deck[0]);
 
 ### Procedural World Generation
 ```javascript
-function generateWorld(seed, width, height) {
-  const worldRNG = new diceRng(seed);
-  const world = [];
-  
-  for (let y = 0; y < height; y++) {
-    const row = [];
-    for (let x = 0; x < width; x++) {
-      const tileType = worldRNG.nextRange(1, 4); // 1, 2, 3, or 4
-      row.push(tileType);
+function generateTerrain(seed) {
+  const rng = new diceRng(seed);
+  const size = 5;
+  let world = "";
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const tile = rng.nextRange(1, 4);
+      world +=
+        tile === 1
+          ? "🌲" // Forest
+          : tile === 2
+          ? "⛰️" // Mountaint
+          : tile === 3
+          ? "🌊" // River
+          : "🟫"; // Land
     }
-    world.push(row);
+    world += "\n";
   }
-  
   return world;
 }
+
+const worldSeed = 1234n;
+console.log(generateTerrain());
+// Output example:
+// 🌲⛰️🌊🟫🌲
+// 🟫🌲⛰️🌊🟫
+// 🌊🟫🌲⛰️🌊
+// ⛰️🌊🟫🌲⛰️
+// 🌲⛰️🌊🟫🌲
+
+
 
 // Use fixed seed for reproducible world
 const worldSeed = 2023n; // Note the 'n' for BigInt!

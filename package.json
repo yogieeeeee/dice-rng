@@ -1,6 +1,6 @@
 {
   "name": "dice-rng",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -8,6 +8,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": ""
 }
