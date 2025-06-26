@@ -175,6 +175,73 @@ const worldSeed = 2023n; // Note the 'n' for BigInt!
 const world = generateWorld(worldSeed, 10, 10);
 ```
 
+### Dice gambling simulation
+```javascript
+class GradualLuckSimulator {
+  constructor() {
+    this.rng = new Xorshift128Plus();
+    this.rollCount = 0;
+  }
+
+  roll() {
+    this.rollCount++;
+
+    // Luck graph decreases linearly
+    const luckFactor = Math.max(0, 1 - (this.rollCount - 1) / 30);
+
+    // Adjust probability based on luck factor
+    const rand = this.rng.nextDouble();
+
+    if (rand < 0.2 + 0.6 * luckFactor) {
+      // High number (4-6)
+      return this.rng.nextRange(4, 6);
+    } else {
+      // Low number (1-3)
+      return this.rng.nextRange(1, 3);
+    }
+  }
+}
+
+// Run simulation with visualization
+function runGradualSimulation() {
+  const simulator = new GradualLuckSimulator();
+  const results = [];
+
+  console.log("===== [ GRADUAL SIMULATION: LUCKY → UNLUCKY ] =====");
+
+  for (let i = 1; i <= 30; i++) {
+    const roll = simulator.roll();
+    results.push(roll);
+
+    const status = roll >= 4 ? "LUCKY 🎇" : "UNLUCKY 💩";
+    const progress =
+      "▰".repeat(Math.ceil(i / 2)) + "▱".repeat(15 - Math.ceil(i / 2));
+
+    console.log(
+      `[${progress}] Roll ${i
+        .toString()
+        .padStart(2, " ")}: ${roll} - ${status}`
+    );
+  }
+
+  // Calculate luck percentage per 10 rolls
+  console.log("\n===== [ LUCK TREND ] =====");
+  for (let segment = 0; segment < 3; segment++) {
+    const segmentResults = results.slice(segment * 10, (segment + 1) * 10);
+    const luckyCount = segmentResults.filter(r => r >= 4).length;
+
+    const progressBar = "⬛".repeat(luckyCount) + "⬜".repeat(10 - luckyCount);
+    console.log(
+      `Rolls ${segment * 10 + 1}-${
+        (segment + 1) * 10
+      }: ${progressBar} ${luckyCount}/10 (${luckyCount * 10}%)`
+    );
+  }
+}
+
+runGradualSimulation();
+```
+
 ## ❗ Error Handling
 This module throws errors in the following cases:
 1. **Initialization**:
